@@ -3,11 +3,10 @@
 
 import os
 import sys
-import glob
-import fileinput
 import urllib
 import urllib.parse
 import urllib.request
+import json
 
 #### Function Define ##########
 
@@ -35,9 +34,17 @@ params = urllib.parse.urlencode({
 	'nojsoncallback': '1'
 })
 
-url = "https://api.flickr.com/services/rest/"
+url = "https://api.flickr.com/services/rest/" + "?" + params
+#print(url)
 
-data = urllib.request.urlopen(url+"?"+params).read()
+data = urllib.request.urlopen(url).read()
+#TODO error handling
 
-print(data)
+j = json.loads(data.decode('utf-8'))
+
+total = j['photos']['total']
+photos = j['photos']['photo']
+
+for photo in photos:
+	print(photo['title'])
 
