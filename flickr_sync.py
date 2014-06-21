@@ -31,6 +31,7 @@ params = urllib.parse.urlencode({
 	'media': 'photos',
 	'per_page': '500',
 	'format': 'json',
+	'extras': 'url_o',
 	'nojsoncallback': '1'
 })
 
@@ -45,6 +46,9 @@ j = json.loads(data.decode('utf-8'))
 total = j['photos']['total']
 photos = j['photos']['photo']
 
+cnt = 0
 for photo in photos:
-	print(photo['title'])
-
+	url_o = photo['url_o']
+	print(url_o+" retriving...")
+	urllib.request.urlretrieve(url_o, path+"/pic"+str(cnt)+".jpg")
+	cnt = cnt + 1
