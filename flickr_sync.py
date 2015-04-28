@@ -11,7 +11,6 @@ import json
 #### Function Define ##########
 
 
-
 #### Main Loop ###############
 if len(sys.argv) <= 3:
 	print("Usages:")
@@ -22,6 +21,9 @@ apikey = sys.argv[1]
 keyword = sys.argv[2]
 path = sys.argv[3]
 
+#print('keyword', keyword)
+
+url_type = 'url_l'
 params = urllib.parse.urlencode({
 	'method': 'flickr.photos.search',
 	'api_key': apikey,
@@ -29,9 +31,10 @@ params = urllib.parse.urlencode({
 	'safe_search': '1',
 	'content_type': '1',
 	'media': 'photos',
-	'per_page': '500',
+	'min_taken_date':1367048429,
+	'per_page': '100',
 	'format': 'json',
-	'extras': 'url_o',
+	'extras': 'date_taken,'+url_type,
 	'nojsoncallback': '1'
 })
 
@@ -42,13 +45,18 @@ data = urllib.request.urlopen(url).read()
 #TODO error handling
 
 j = json.loads(data.decode('utf-8'))
+#print(j)
 
 total = j['photos']['total']
 photos = j['photos']['photo']
 
+exit();
+
 cnt = 0
 for photo in photos:
-	url_o = photo['url_o']
-	print(url_o+" retriving...")
-	urllib.request.urlretrieve(url_o, path+"/pic"+str(cnt)+".jpg")
-	cnt = cnt + 1
+	if url_type in photo:
+		url_o = photo.get(url_type)
+		image_path = path+"/pic"+str(cnt)+".jpg"
+		print(url_o+" retriving... to " + image_path)
+		urllib.request.urlretrieve(url_o, image_path)
+		cnt = cnt + 1
